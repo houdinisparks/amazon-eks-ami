@@ -200,6 +200,16 @@ Environment='KUBELET_EXTRA_ARGS=$KUBELET_EXTRA_ARGS'
 EOF
 fi
 
+# Register docker with aws ecr credentials
+# (this is a known bug in which kubelet will fail to pass down
+# proper ecr credentials to the docker daemon with a private linked ECR )
+# TODO: remove this when gg to production. download images
+# and save to tar file during packer build instead.
+eval $(aws ecr get-login --registry-id 602401143452 --no-include-email --region ap-southeast-1)
+sed -i '/^\[Service\]/a User=root'  /usr/lib/systemd/system/docker.service
+sed -i '/^\[Service\]/a User=root'  /etc/systemd/system/kubelet.service
+
+
 # Replace with custom docker config contents.
 if [[ -n "$DOCKER_CONFIG_JSON" ]]; then
     echo "$DOCKER_CONFIG_JSON" > /etc/docker/daemon.json
