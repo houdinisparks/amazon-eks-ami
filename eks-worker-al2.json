@@ -78,7 +78,7 @@
       },
       "subnet_id": "{{user `subnet_id`}}",
       "tags": {
-          "Name": "{{user `ami_name`}}",
+          "Name": "{{user `ami_name` | clean_resource_name }}",
           "created": "{{timestamp}}",
           "docker_version": "{{ user `docker_version`}}",
           "source_ami_id": "{{ user `source_ami_id`}}",
@@ -86,7 +86,7 @@
           "cni_version": "{{ user `cni_version`}}",
           "cni_plugin_version": "{{ user `cni_plugin_version`}}"
       },
-      "ami_name": "{{user `ami_name`}}",
+      "ami_name": "{{user `ami_name` | clean_resource_name }}",
       "ami_description": "{{ user `ami_description` }}, (k8s: {{ user `kubernetes_version`}}, docker:{{ user `docker_version`}})"
     }
   ],
