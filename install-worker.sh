@@ -46,17 +46,15 @@ fi
 ################################################################################
 ### Packages ###################################################################
 ################################################################################
+# Ref for RHEL:  https://github.com/powerupcloud/aws-eks-rhel-workers/blob/master/install-worker.sh
 
 # Update the OS to begin with to catch up to the latest packages.
 sudo yum update -y
 
-<<<<<<< Updated upstream
-# Install necessary packages
-=======
 
 # Update the Redhat OS with EPEL releases + Docker repo
 sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-sudo yum install -y https://8amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.amzn1.noarch.rpm
+sudo yum install -y https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.amzn1.noarch.rpm
 sudo ln -s /usr/local/lib/python2.7/site-packages/cfnbootstrap /usr/lib/python2.7/site-packages/cfnbootstrap
 sudo yum install -y http://mirror.centos.org/centos/7/extras/x86_64/Packages/container-selinux-2.74-1.el7.noarch.rpm
 
@@ -71,21 +69,24 @@ sudo easy_install-3.6 pip
 sudo pip3 install --upgrade \
     awscli
 
+
 # Install necessary packages using yum
->>>>>>> Stashed changes
 sudo yum install -y \
-    aws-cfn-bootstrap \
-    awscli \
+    git \
     chrony \
     conntrack \
     curl \
     jq \
-    ec2-instance-connect \
     nfs-utils \
     socat \
     unzip \
-    wget \
-    bind-utils
+    wget
+
+# Remove packages from default script:
+# - ec2-instance-connect \
+# - aws-cfn-bootstrap \
+# - awscli \
+
 
 ################################################################################
 ### Time #######################################################################
@@ -129,12 +130,12 @@ sudo yum install -y yum-utils device-mapper-persistent-data lvm2
 
 INSTALL_DOCKER="${INSTALL_DOCKER:-true}"
 if [[ "$INSTALL_DOCKER" == "true" ]]; then
-    sudo amazon-linux-extras enable docker
-    sudo yum install -y docker-${DOCKER_VERSION}*
+    sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    sudo yum install -y docker-ce-${DOCKER_VERSION}*
     sudo usermod -aG docker $USER
 
     # Remove all options from sysconfig docker.
-    sudo sed -i '/OPTIONS/d' /etc/sysconfig/docker
+    # sudo sed -i '/OPTIONS/d' /etc/sysconfig/docker
 
     sudo mkdir -p /etc/docker
     sudo mv $TEMPLATE_DIR/docker-daemon.json /etc/docker/daemon.json
