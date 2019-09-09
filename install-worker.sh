@@ -50,7 +50,29 @@ fi
 # Update the OS to begin with to catch up to the latest packages.
 sudo yum update -y
 
+<<<<<<< Updated upstream
 # Install necessary packages
+=======
+
+# Update the Redhat OS with EPEL releases + Docker repo
+sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+sudo yum install -y https://8amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.amzn1.noarch.rpm
+sudo ln -s /usr/local/lib/python2.7/site-packages/cfnbootstrap /usr/lib/python2.7/site-packages/cfnbootstrap
+sudo yum install -y http://mirror.centos.org/centos/7/extras/x86_64/Packages/container-selinux-2.74-1.el7.noarch.rpm
+
+## if not set to permissive, the docker containers will not be able to provision and throw Permission Denied Error
+sudo sed -i 's/enforcing/permissive/g' /etc/selinux/config 
+
+# Install necessary packages using pip
+sudo yum install -y python36 python36-setuptools 
+sudo easy_install-3.6 pip
+# sudo ln -s $(which pip3) /usr/bin/pip3
+
+sudo pip3 install --upgrade \
+    awscli
+
+# Install necessary packages using yum
+>>>>>>> Stashed changes
 sudo yum install -y \
     aws-cfn-bootstrap \
     awscli \
@@ -62,7 +84,8 @@ sudo yum install -y \
     nfs-utils \
     socat \
     unzip \
-    wget
+    wget \
+    bind-utils
 
 ################################################################################
 ### Time #######################################################################
